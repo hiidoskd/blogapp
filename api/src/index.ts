@@ -1,6 +1,7 @@
 import express from 'express';
 import router from './router';
 import cookieParser from 'cookie-parser';
+import swaggerDocs from './utils/swagger';
 
 const app = express();
 const port = 8080;
@@ -18,6 +19,7 @@ app.get('/', (request, response) => {
 
 app.listen(port, () => {
   console.log(`App running on port ${port}.`);
+  swaggerDocs(app, port);
 });
 
 app.use('/api', router());
