@@ -2,6 +2,7 @@ import { Response, Request } from 'express';
 import jwt from 'jsonwebtoken';
 
 import { pool } from '../db';
+import { error } from 'console';
 
 export const getPosts = async (req: Request, res: Response) => {
   try {
@@ -94,9 +95,20 @@ export const updatePost = async (req: Request, res: Response) => {
   }
   try {
     const userInfo = jwt.verify(token, 'secretkey');
+    const uid = JSON.parse(JSON.stringify(userInfo)).id;
+    const select = 'SELECT * from posts WHERE id = $1';
+
+    let client = await pool.connect();
+    let result = await client.query(select, [req.params.id]);
+    client.release();
+    console.log(uid, result.rows[0]);
+    if (result.rows[0].uid != uid) {
+      return res.status(403).json(error);
+    }
+
     const sql = `UPDATE posts SET title=$1, description=$2, img=$3, date=to_timestamp(${Date.now()} / 1000.0) WHERE id = $4 AND uid = $5`;
 
-    const client = await pool.connect();
+    client = await pool.connect();
 
     await client.query(sql, [
       req.body.title,
@@ -109,6 +121,6 @@ export const updatePost = async (req: Request, res: Response) => {
     client.release();
     res.status(200).json('Updated post');
   } catch (error) {
-    return res.status(403).json(error);
+    return res.status(400).json(error);
   }
 };
