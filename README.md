@@ -1,5 +1,5 @@
 # blogapp
-To start, run:
+### To start, run:
 ```
 npm install
 npm run dev
