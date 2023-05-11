@@ -19,12 +19,15 @@ export const getPosts = async (req: Request, res: Response) => {
 export const getPost = async (req: Request, res: Response) => {
   try {
     const sql =
-      'SELECT username, title, description, posts.img, users.img AS userImg, date FROM users JOIN posts ON  users.id = posts.uid WHERE  p.id = $1';
+      'SELECT username, title, description, posts.img, date FROM users JOIN posts ON  users.id = posts.uid WHERE  posts.id = $1';
 
     const client = await pool.connect();
     const result = await client.query(sql, [req.params.id]);
     client.release();
 
+    if (result.rowCount == 0) {
+      return res.sendStatus(404);
+    }
     res.status(200).json(result.rows[0]);
   } catch (error) {
     res.status(500).json(error);
@@ -33,12 +36,12 @@ export const getPost = async (req: Request, res: Response) => {
 
 export const addPost = async (req: Request, res: Response) => {
   const token = req.cookies.access_token;
+  console.log(token);
   if (!token) {
     return res.status(401).json('Not authorized');
   }
   try {
-    const sql =
-      'INSERT INTO posts (title, description, img, date, uid) VALUES ($1, $2, $3, $4, $5);';
+    const sql = `INSERT INTO posts (title, description, img, date, uid) VALUES ($1, $2, $3, to_timestamp(${Date.now()} / 1000.0), $4)`;
     const userInfo = jwt.verify(token, 'secretkey');
 
     const client = await pool.connect();
@@ -46,7 +49,6 @@ export const addPost = async (req: Request, res: Response) => {
       req.body.title,
       req.body.description,
       req.body.img,
-      req.body.date,
       JSON.parse(JSON.stringify(userInfo)).id,
     ]);
     client.release();
@@ -87,8 +89,7 @@ export const updatePost = async (req: Request, res: Response) => {
   }
   try {
     const userInfo = jwt.verify(token, 'secretkey');
-    const sql =
-      'UPDATE posts SET title=$1, description=$2, img=$3, date=$4 WHERE id = $5 AND uid = $6';
+    const sql = `UPDATE posts SET title=$1, description=$2, img=$3, date=to_timestamp(${Date.now()} / 1000.0) WHERE id = $4 AND uid = $5`;
 
     const client = await pool.connect();
 
@@ -96,7 +97,6 @@ export const updatePost = async (req: Request, res: Response) => {
       req.body.title,
       req.body.description,
       req.body.img,
-      req.body.date,
       req.params.id,
       JSON.parse(JSON.stringify(userInfo)).id,
     ]);
