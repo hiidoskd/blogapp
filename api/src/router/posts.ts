@@ -1,4 +1,4 @@
-import express from 'express';
+import { Router } from 'express';
 
 import {
   addPost,
@@ -8,7 +8,7 @@ import {
   updatePost,
 } from '../controllers/posts';
 
-export default (router: express.Router) => {
+export default (router: Router) => {
   router.get('/posts', getPosts);
   router.get('/posts/:id', getPost);
   router.post('/posts', addPost);

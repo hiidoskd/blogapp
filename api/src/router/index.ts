@@ -1,12 +1,12 @@
-import express from 'express';
+import { Router } from 'express';
 
 import users from './users';
 import auth from './auth';
 import posts from './posts';
 
-const router = express.Router();
+const router = Router();
 
-export default (): express.Router => {
+export default (): Router => {
   auth(router);
   users(router);
   posts(router);

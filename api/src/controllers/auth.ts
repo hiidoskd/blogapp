@@ -1,10 +1,10 @@
-import express from 'express';
+import { Request, Response } from 'express';
 import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
 
 import { pool } from '../db';
 
-export const register = async (req: express.Request, res: express.Response) => {
+export const register = async (req: Request, res: Response) => {
   try {
     const { username, email, password } = req.body;
 
@@ -36,7 +36,7 @@ export const register = async (req: express.Request, res: express.Response) => {
   }
 };
 
-export const login = async (req: express.Request, res: express.Response) => {
+export const login = async (req: Request, res: Response) => {
   try {
     const { username, email, password } = req.body;
     var client = await pool.connect();
@@ -67,7 +67,7 @@ export const login = async (req: express.Request, res: express.Response) => {
   }
 };
 
-export const logout = async (req: express.Request, res: express.Response) => {
+export const logout = async (req: Request, res: Response) => {
   try {
     res
       .clearCookie('access_token', {

@@ -1,9 +1,9 @@
-import express from 'express';
+import { Response, Request } from 'express';
 import jwt from 'jsonwebtoken';
 
 import { pool } from '../db';
 
-export const getPosts = async (req: express.Request, res: express.Response) => {
+export const getPosts = async (req: Request, res: Response) => {
   try {
     const sql = 'SELECT * FROM posts';
 
@@ -16,7 +16,7 @@ export const getPosts = async (req: express.Request, res: express.Response) => {
     res.status(500).json(error);
   }
 };
-export const getPost = async (req: express.Request, res: express.Response) => {
+export const getPost = async (req: Request, res: Response) => {
   try {
     const sql =
       'SELECT username, title, description, posts.img, users.img AS userImg, date FROM users JOIN posts ON  users.id = posts.uid WHERE  p.id = $1';
@@ -31,7 +31,7 @@ export const getPost = async (req: express.Request, res: express.Response) => {
   }
 };
 
-export const addPost = async (req: express.Request, res: express.Response) => {
+export const addPost = async (req: Request, res: Response) => {
   const token = req.cookies.access_token;
   if (!token) {
     return res.status(401).json('Not authorized');
@@ -57,10 +57,7 @@ export const addPost = async (req: express.Request, res: express.Response) => {
   }
 };
 
-export const deletePost = async (
-  req: express.Request,
-  res: express.Response
-) => {
+export const deletePost = async (req: Request, res: Response) => {
   const token = req.cookies.access_token;
   if (!token) {
     return res.status(401).json('Not authorized');
@@ -83,10 +80,7 @@ export const deletePost = async (
   }
 };
 
-export const updatePost = async (
-  req: express.Request,
-  res: express.Response
-) => {
+export const updatePost = async (req: Request, res: Response) => {
   const token = req.cookies.access_token;
   if (!token) {
     return res.status(401).json('Not authorized');

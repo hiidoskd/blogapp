@@ -1,10 +1,7 @@
 import { pool } from '../db';
-import express from 'express';
+import { Request, Response } from 'express';
 
-export const getAllUsers = async (
-  req: express.Request,
-  res: express.Response
-) => {
+export const getAllUsers = async (req: Request, res: Response) => {
   try {
     const client = await pool.connect();
 
@@ -21,10 +18,7 @@ export const getAllUsers = async (
   }
 };
 
-export const getUserById = async (
-  req: express.Request,
-  res: express.Response
-) => {
+export const getUserById = async (req: Request, res: Response) => {
   try {
     const client = await pool.connect();
     const id = parseInt(req.params.id);
