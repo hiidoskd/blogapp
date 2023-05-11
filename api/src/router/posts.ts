@@ -10,6 +10,7 @@ import {
 
 export default (router: Router) => {
   router.get('/posts', getPosts);
+
   router.get('/posts/:id', getPost);
   router.post('/posts', addPost);
   router.delete('/posts/:id', deletePost);

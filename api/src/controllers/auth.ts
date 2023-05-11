@@ -14,11 +14,11 @@ export const register = async (req: Request, res: Response) => {
     // check if user already exists
     var client = await pool.connect();
     const sql = 'SELECT * from users WHERE email = $1 OR username = $2';
-    const result = await client.query(sql, [username, email]);
-
+    const result = await client.query(sql, [email, username]);
+    client.release();
+    console.log(email, username);
     if (result.rowCount) {
-      client.release();
-      return res.sendStatus(409).json('User already exists.');
+      return res.sendStatus(409);
     }
     // hashing the password
     const salt = bcrypt.genSaltSync(10);
@@ -27,9 +27,11 @@ export const register = async (req: Request, res: Response) => {
     const query =
       'INSERT INTO users (username, email, password) VALUES ($1,$2,$3)';
 
+    client = await pool.connect();
     await client.query(query, [username, email, hash]);
     client.release();
-    res.status(200).json('Success');
+
+    res.status(200).json({ email, username });
   } catch (error) {
     console.log(error);
     res.status(400).send(error);
@@ -44,7 +46,7 @@ export const login = async (req: Request, res: Response) => {
     const result = await client.query(sql, [username]);
     client.release();
     if (result.rowCount == 0) {
-      return res.status(404).json('User does not exist');
+      return res.status(404);
     }
 
     const passwordsMatch = bcrypt.compareSync(
