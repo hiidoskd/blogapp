@@ -34,6 +34,9 @@ export default (router: Router) => {
    *        uid:
    *          type: string
    *          default: 10
+   *        author:
+   *          type: string
+   *          default: username
    *    CreatePostSchema:
    *      type: object
    *      required:
@@ -50,8 +53,66 @@ export default (router: Router) => {
    *        img:
    *          type: string
    *          default: imgurl.jpg
+   *    AllPosts:
+   *      type: array
+   *      items:
+   *        type: object
+   *        properties:
+   *          id:
+   *            type: string
+   *            default: 1
+   *          title:
+   *            type: string
+   *            default: Post Title
+   *          description:
+   *            type: string
+   *            default: Post Content
+   *          img:
+   *            type: string
+   *            default: imgurl
+   *          date:
+   *            type: string
+   *            default: 2023-05-08 23:45:19.703077
+   *          uid:
+   *            type: string
+   *            default: 10
+   *          author:
+   *            type: string
+   *            default: username
+   *      minItems: 0
+   *      maxItems: 20
    */
 
+  /**
+   * @openapi
+   * '/api/posts':
+   *  get:
+   *     tags:
+   *     - Posts
+   *     summary: Get post all posts
+   *     parameters:
+   *      - in: query
+   *        name: page
+   *        schema:
+   *          type: integer
+   *        description: Page number
+   *        default: 1
+   *      - in: query
+   *        name: items
+   *        schema:
+   *          type: integer
+   *        description: Number of items per page
+   *        default: 20
+   *     responses:
+   *       200:
+   *         description: Success
+   *         content:
+   *          application/json:
+   *            schema:
+   *              $ref: '#/components/schemas/AllPosts'
+   *       500:
+   *         description: Internal error
+   */
   router.get('/posts', getPosts);
 
   /**
@@ -79,6 +140,7 @@ export default (router: Router) => {
    *       404:
    *         description: Post not found
    */
+
   router.get('/posts/:id', getPost);
   /**
    * @openapi

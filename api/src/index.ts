@@ -14,7 +14,7 @@ app.use(
 );
 app.use(cookieParser());
 app.get('/', (request, response) => {
-  response.json({ info: 'Node.js, Express, and Postgres API' });
+  response.send('<h1>go to ./docs</h1>');
 });
 
 app.listen(port, () => {

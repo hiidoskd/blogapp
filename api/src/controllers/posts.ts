@@ -5,7 +5,12 @@ import { pool } from '../db';
 
 export const getPosts = async (req: Request, res: Response) => {
   try {
-    const sql = 'SELECT * FROM posts';
+    const page: number = +req.query.page || 1;
+    const itemsPerPage: number = +req.query.items || 20;
+
+    const sql = `SELECT posts.id, title, description, img, date, uid, username as author
+                  FROM posts JOIN users ON users.id = posts.uid 
+                  LIMIT ${itemsPerPage} OFFSET ${(page - 1) * itemsPerPage}`;
 
     const client = await pool.connect();
     const result = await client.query(sql);
@@ -19,7 +24,7 @@ export const getPosts = async (req: Request, res: Response) => {
 export const getPost = async (req: Request, res: Response) => {
   try {
     const sql =
-      'SELECT username, title, description, posts.img, date FROM users JOIN posts ON  users.id = posts.uid WHERE  posts.id = $1';
+      'SELECT posts.id, title, description, img, date, uid, username FROM posts JOIN users ON users.id = posts.uid WHERE posts.id = $1';
 
     const client = await pool.connect();
     const result = await client.query(sql, [req.params.id]);
