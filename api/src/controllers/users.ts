@@ -5,7 +5,7 @@ export const getAllUsers = async (req: Request, res: Response) => {
   try {
     const client = await pool.connect();
 
-    const sql = 'SELECT username, email FROM users';
+    const sql = 'SELECT id, username, email FROM users';
     const { rows } = await client.query(sql);
     const users = rows;
 
